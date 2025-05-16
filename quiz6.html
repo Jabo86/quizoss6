@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulazione Concorso Operatore Socio Sanitario - Modulo 16</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            margin: 0;
+            padding: 20px;
+            color: #f0f0f0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700; }
+            to { text-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700; }
+        }
+
+        #timer {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.5em;
+            color: #00eaff;
+            text-shadow: 0 0 5px #00eaff;
+        }
+
+        .question-nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .question-box {
+            width: 40px;
+            height: 40px;
+            margin: 8px;
+            background: linear-gradient(45deg, #333, #555);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .question-box:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question-box.answered {
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question.active {
+            display: block;
+        }
+
+        .question h3 {
+            margin: 0 0 15px 0;
+            color: #ffffff;
+            font-size: 1.6em;
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
+            line-height: 1.4;
+        }
+
+        .option {
+            margin: 10px 0;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            color: #ffffff;
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+
+        .option:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateX(5px);
+        }
+
+        .option.correct {
+            background: linear-gradient(90deg, #00eaff, #00b8d4);
+            color: #fff;
+            box-shadow: 0 0 15px #00eaff;
+        }
+
+        .option.wrong {
+            background: linear-gradient(90deg, #ff5252, #d81b60);
+            color: #fff;
+            box-shadow: 0 0 15px #ff5252;
+        }
+
+        .lamp {
+            display: none;
+            margin-left: 15px;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+            transition: transform 0.3s ease;
+        }
+
+        .lamp:hover {
+            transform: scale(1.2);
+        }
+
+        .explanation {
+            margin-top: 15px;
+            font-style: italic;
+            color: #f0f0f0;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            animation: slideIn 0.5s ease;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .nav-button {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2em;
+            box-shadow: 0 0 10px #ffd700;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .nav-button:disabled {
+            background: #666;
+            color: #ccc;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .nav-button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #ffd700;
+        }
+
+        button#submit {
+            display: block;
+            width: 250px;
+            margin: 20px auto;
+            padding: 15px;
+            background: linear-gradient(45deg, #00eaff, #00b8d4);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.3em;
+            box-shadow: 0 0 15px #00eaff;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        button#submit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px #00eaff;
+        }
+
+        #result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.8em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Simulazione Concorso Operatore Socio Sanitario - Modulo 16</h1>
+        <div class="question-nav" id="questionNav"></div>
+        <div id="timer">Tempo rimanente: <span id="time">30:00</span></div>
+        <div id="quiz"></div>
+        <div class="navigation">
+            <button class="nav-button" id="prev" disabled>⬅ Indietro</button>
+            <button class="nav-button" id="next">Avanti ➡</button>
+        </div>
+        <button id="submit">Invia Risposte</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Array di domande (451-480) simulate, uniche rispetto ai moduli precedenti e al Modulo 17
+        const questions = [
+            {
+                question: "La gestione del paziente con demenza include:",
+                options: [
+                    "ignorare i comportamenti agitati",
+                    "promuovere un ambiente calmo e strutturato",
+                    "fornire stimoli complessi"
+                ],
+                correct: "promuovere un ambiente calmo e strutturato",
+                explanation: "La demenza richiede un ambiente calmo, con routine prevedibili per ridurre l’agitazione. L’OSS deve osservare i comportamenti, comunicare con calma, e segnalare all’infermiere episodi di confusione o aggressività."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di agitazione in un paziente con demenza?",
+                options: [
+                    "passeggiare senza meta e irritabilità",
+                    "comunicazione fluida",
+                    "sonno regolare"
+                ],
+                correct: "passeggiare senza meta e irritabilità",
+                explanation: "Passeggiare senza meta e irritabilità sono segni di agitazione nella demenza. L’OSS deve monitorare il paziente, evitare stimoli eccessivi, e segnalare all’infermiere per una valutazione."
+            },
+            {
+                question: "La mobilizzazione di un paziente con emiparesi include:",
+                options: [
+                    "uso di ausili e supporto al lato debole",
+                    "movimenti rapidi senza supporto",
+                    "immobilizzazione completa"
+                ],
+                correct: "uso di ausili e supporto al lato debole",
+                explanation: "L’emiparesi richiede supporto al lato debole con ausili (es. bastone, deambulatore). L’OSS deve assistere nei trasferimenti, prevenire cadute, e segnalare all’infermiere difficoltà motorie."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di sovraccarico durante la mobilizzazione?",
+                options: [
+                    "fatica e sudorazione eccessiva",
+                    "movimenti fluidi",
+                    "respirazione regolare"
+                ],
+                correct: "fatica e sudorazione eccessiva",
+                explanation: "Fatica e sudorazione eccessiva indicano sovraccarico. L’OSS deve monitorare il paziente durante la mobilizzazione, interrompere se necessario, e segnalare all’infermiere sintomi come dispnea."
+            },
+            {
+                question: "La gestione dell’igiene ambientale in una stanza di degenza include:",
+                options: [
+                    "pulizia regolare delle superfici",
+                    "accumulo di rifiuti",
+                    "ventilazione assente"
+                ],
+                correct: "pulizia regolare delle superfici",
+                explanation: "L’igiene ambientale richiede pulizia regolare delle superfici per prevenire infezioni. L’OSS deve usare detergenti appropriati, smaltire i rifiuti, e segnalare all’infermiere condizioni insalubri."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di scarsa igiene ambientale?",
+                options: [
+                    "odore sgradevole e polvere",
+                    "superfici pulite",
+                    "aria fresca"
+                ],
+                correct: "odore sgradevole e polvere",
+                explanation: "Odore sgradevole e polvere indicano scarsa igiene. L’OSS deve eseguire pulizie regolari, ventilare l’ambiente, e segnalare all’infermiere problemi strutturali."
+            },
+            {
+                question: "La gestione del paziente con disfagia include:",
+                options: [
+                    "offerta di cibi tritati o frullati",
+                    "somministrazione di cibi solidi",
+                    "posizione supina durante i pasti"
+                ],
+                correct: "offerta di cibi tritati o frullati",
+                explanation: "La disfagia richiede cibi tritati o frullati per prevenire il rischio di aspirazione. L’OSS deve assistere il paziente in posizione eretta, monitorare la deglutizione, e segnalare all’infermiere difficoltà."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di rischio di aspirazione?",
+                options: [
+                    "tosse durante i pasti",
+                    "deglutizione fluida",
+                    "appetito regolare"
+                ],
+                correct: "tosse durante i pasti",
+                explanation: "Tosse durante i pasti indica rischio di aspirazione. L’OSS deve monitorare il paziente, mantenere una posizione corretta, e segnalare all’infermiere sintomi come soffocamento."
+            },
+            {
+                question: "La gestione del paziente con dolore cronico include:",
+                options: [
+                    "osservazione dei segnali non verbali",
+                    "ignorare le lamentele",
+                    "movimenti forzati"
+                ],
+                correct: "osservazione dei segnali non verbali",
+                explanation: "Il dolore cronico richiede osservazione di segnali non verbali (es. smorfie, irrequietezza). L’OSS deve annotare i sintomi, garantire comfort, e segnalare all’infermiere variazioni nel dolore."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di dolore non verbale?",
+                options: [
+                    "espressioni facciali tese",
+                    "sonno tranquillo",
+                    "movimenti fluidi"
+                ],
+                correct: "espressioni facciali tese",
+                explanation: "Espressioni facciali tese indicano dolore non verbale. L’OSS deve monitorare il paziente, usare tecniche di rilassamento, e segnalare all’infermiere per una gestione adeguata."
+            },
+            {
+                question: "La gestione del paziente con limitata mobilità include:",
+                options: [
+                    "uso di tecniche di sollevamento sicure",
+                    "trascinamento del paziente",
+                    "nessun supporto fisico"
+                ],
+                correct: "uso di tecniche di sollevamento sicure",
+                explanation: "La limitata mobilità richiede tecniche di sollevamento sicure (es. sollevatori). L’OSS deve proteggere sé stesso e il paziente, prevenire lesioni, e segnalare all’infermiere difficoltà."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di lesione da sollevamento scorretto?",
+                options: [
+                    "dolore lombare nell’OSS",
+                    "movimento fluido",
+                    "comfort del paziente"
+                ],
+                correct: "dolore lombare nell’OSS",
+                explanation: "Dolore lombare nell’OSS indica una tecnica di sollevamento scorretta. L’OSS deve usare ausili meccanici, mantenere una postura corretta, e segnalare all’infermiere eventuali infortuni."
+            },
+            {
+                question: "La gestione del paziente con confusione mentale include:",
+                options: [
+                    "orientamento con riferimenti temporali",
+                    "isolamento sociale",
+                    "stimoli complessi"
+                ],
+                correct: "orientamento con riferimenti temporali",
+                explanation: "La confusione mentale richiede orientamento con riferimenti temporali (es. orologi, calendari). L’OSS deve comunicare con chiarezza, rassicurare il paziente, e segnalare all’infermiere episodi gravi."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di confusione mentale acuta?",
+                options: [
+                    "disorientamento e deliri",
+                    "memoria intatta",
+                    "comunicazione chiara"
+                ],
+                correct: "disorientamento e deliri",
+                explanation: "Disorientamento e deliri indicano confusione mentale acuta. L’OSS deve monitorare il paziente, mantenere un ambiente sicuro, e segnalare all’infermiere per una valutazione."
+            },
+            {
+                question: "La gestione del paziente con rischio di autolesionismo include:",
+                options: [
+                    "rimozione di oggetti pericolosi",
+                    "accesso a strumenti taglienti",
+                    "supervisione assente"
+                ],
+                correct: "rimozione di oggetti pericolosi",
+                explanation: "Il rischio di autolesionismo richiede la rimozione di oggetti pericolosi. L’OSS deve monitorare il paziente, garantire sicurezza, e segnalare all’infermiere comportamenti a rischio."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di rischio di autolesionismo?",
+                options: [
+                    "espressioni di disperazione",
+                    "comportamento rilassato",
+                    "interazioni sociali attive"
+                ],
+                correct: "espressioni di disperazione",
+                explanation: "Espressioni di disperazione indicano rischio di autolesionismo. L’OSS deve osservare il paziente, comunicare con empatia, e segnalare all’infermiere per un intervento immediato."
+            },
+            {
+                question: "La gestione del paziente con difficoltà di comunicazione include:",
+                options: [
+                    "uso di strumenti alternativi",
+                    "comunicazione rapida",
+                    "ignorare le difficoltà"
+                ],
+                correct: "uso di strumenti alternativi",
+                explanation: "Le difficoltà di comunicazione richiedono strumenti alternativi (es. tabelle, gesti). L’OSS deve comunicare con pazienza, verificare la comprensione, e segnalare all’infermiere barriere significative."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di difficoltà di comunicazione?",
+                options: [
+                    "frustrazione e gesti ripetitivi",
+                    "discorso fluido",
+                    "comprensione rapida"
+                ],
+                correct: "frustrazione e gesti ripetitivi",
+                explanation: "Frustrazione e gesti ripetitivi indicano difficoltà di comunicazione. L’OSS deve usare strumenti visivi, mantenere la calma, e segnalare all’infermiere per un supporto specialistico."
+            },
+            {
+                question: "La gestione del paziente con limitazioni visive include:",
+                options: [
+                    "orientamento nell’ambiente",
+                    "rimozione di segnali visivi",
+                    "movimenti rapidi"
+                ],
+                correct: "orientamento nell’ambiente",
+                explanation: "Le limitazioni visive richiedono orientamento nell’ambiente (es. descrizione degli spazi). L’OSS deve guidare il paziente, rimuovere ostacoli, e segnalare all’infermiere difficoltà."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di difficoltà visiva?",
+                options: [
+                    "inciampo frequente",
+                    "orientamento preciso",
+                    "movimenti fluidi"
+                ],
+                correct: "inciampo frequente",
+                explanation: "Inciampo frequente indica difficoltà visiva. L’OSS deve assistere il paziente, mantenere l’ambiente ordinato, e segnalare all’infermiere per una valutazione."
+            },
+            {
+                question: "La gestione del paziente con limitazioni uditive include:",
+                options: [
+                    "comunicazione chiara e visiva",
+                    "parlare rapidamente",
+                    "ignorare le difficoltà"
+                ],
+                correct: "comunicazione chiara e visiva",
+                explanation: "Le limitazioni uditive richiedono comunicazione chiara e visiva (es. lettura labiale, gesti). L’OSS deve verificare la comprensione, usare strumenti visivi, e segnalare all’infermiere barriere."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di difficoltà uditiva?",
+                options: [
+                    "risposte inappropriate",
+                    "comprensione rapida",
+                    "interazioni fluide"
+                ],
+                correct: "risposte inappropriate",
+                explanation: "Risposte inappropriate indicano difficoltà uditiva. L’OSS deve comunicare con chiarezza, usare segnali visivi, e segnalare all’infermiere per un supporto specialistico."
+            },
+            {
+                question: "La gestione del paziente con rischio di malnutrizione include:",
+                options: [
+                    "monitoraggio dell’intake alimentare",
+                    "offerta di cibi pesanti",
+                    "ignorare l’appetito"
+                ],
+                correct: "monitoraggio dell’intake alimentare",
+                explanation: "Il rischio di malnutrizione richiede monitoraggio dell’intake alimentare. L’OSS deve annotare le quantità consumate, offrire cibi adeguati, e segnalare all’infermiere calo ponderale."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di malnutrizione?",
+                options: [
+                    "perdita di peso e debolezza",
+                    "aumento dell’appetito",
+                    "energia elevata"
+                ],
+                correct: "perdita di peso e debolezza",
+                explanation: "Perdita di peso e debolezza indicano malnutrizione. L’OSS deve monitorare il peso, promuovere una dieta bilanciata, e segnalare all’infermiere segni di deterioramento."
+            },
+            {
+                question: "La gestione del paziente con rischio di disorientamento include:",
+                options: [
+                    "uso di segnali visivi chiari",
+                    "ambienti complessi",
+                    "illuminazione scarsa"
+                ],
+                correct: "uso di segnali visivi chiari",
+                explanation: "Il rischio di disorientamento richiede segnali visivi chiari (es. cartelli). L’OSS deve orientare il paziente, mantenere routine prevedibili, e segnalare all’infermiere episodi gravi."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di disorientamento?",
+                options: [
+                    "difficoltà a riconoscere luoghi",
+                    "orientamento preciso",
+                    "memoria intatta"
+                ],
+                correct: "difficoltà a riconoscere luoghi",
+                explanation: "Difficoltà a riconoscere luoghi indica disorientamento. L’OSS deve rassicurare il paziente, usare segnali visivi, e segnalare all’infermiere per una valutazione."
+            },
+            {
+                question: "La gestione del paziente con rischio di isolamento sociale include:",
+                options: [
+                    "promozione di interazioni sociali",
+                    "isolamento in camera",
+                    "ignorare le emozioni"
+                ],
+                correct: "promozione di interazioni sociali",
+                explanation: "Il rischio di isolamento sociale richiede promozione di interazioni (es. attività di gruppo). L’OSS deve incoraggiare il coinvolgimento, osservare l’umore, e segnalare all’infermiere segni di depressione."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di isolamento sociale?",
+                options: [
+                    "ritiro e apatia",
+                    "partecipazione attiva",
+                    "comunicazione fluida"
+                ],
+                correct: "ritiro e apatia",
+                explanation: "Ritiro e apatia indicano isolamento sociale. L’OSS deve promuovere attività sociali, monitorare l’umore, e segnalare all’infermiere per un supporto psicologico."
+            },
+            {
+                question: "La gestione del paziente con rischio di caduta notturna include:",
+                options: [
+                    "illuminazione adeguata di notte",
+                    "rimozione delle sponde",
+                    "pavimento disordinato"
+                ],
+                correct: "illuminazione adeguata di notte",
+                explanation: "Il rischio di caduta notturna richiede illuminazione adeguata e sponde al letto. L’OSS deve controllare l’ambiente, assistere nei trasferimenti, e segnalare all’infermiere episodi di instabilità."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di rischio di caduta notturna?",
+                options: [
+                    "confusione e deambulazione notturna",
+                    "sonno tranquillo",
+                    "movimenti fluidi"
+                ],
+                correct: "confusione e deambulazione notturna",
+                explanation: "Confusione e deambulazione notturna indicano rischio di caduta. L’OSS deve monitorare il paziente, usare dispositivi di sicurezza, e segnalare all’infermiere episodi a rischio."
+            }
+        ];
+
+        let currentQuestion = 0;
+
+        // Carica i quadratini di navigazione
+        function loadQuestionNav() {
+            const navDiv = document.getElementById("questionNav");
+            questions.forEach((_, index) => {
+                const box = document.createElement("div");
+                box.classList.add("question-box");
+                box.textContent = index + 1;
+                box.addEventListener("click", () => {
+                    showQuestion(index);
+                });
+                navDiv.appendChild(box);
+            });
+        }
+
+        // Carica il quiz
+        function loadQuiz() {
+            const quizDiv = document.getElementById("quiz");
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement("div");
+                questionDiv.classList.add("question");
+                questionDiv.id = `question-${index}`;
+                questionDiv.innerHTML = `
+                    <h3>${index + 451}. ${q.question}</h3>
+                    ${q.options.map((opt, i) => `
+                        <div class="option" data-value="${opt}">
+                            <input type="radio" name="q${index}" value="${opt}" id="q${index}_${i}">
+                            <label for="q${index}_${i}">${opt}</label>
+                            <span class="lamp" id="lamp-${index}-${i}">💡</span>
+                        </div>
+                    `).join("")}
+                    <div class="explanation" id="exp-${index}">${q.explanation}</div>
+                `;
+                quizDiv.appendChild(questionDiv);
+
+                const radios = questionDiv.querySelectorAll(`input[name="q${index}"]`);
+                radios.forEach(radio => {
+                    radio.addEventListener("change", () => {
+                        document.querySelectorAll(".question-box")[index].classList.add("answered");
+                    });
+                });
+            });
+            showQuestion(0);
+        }
+
+        // Mostra la domanda corrente
+        function showQuestion(index) {
+            document.querySelectorAll(".question").forEach(q => q.classList.remove("active"));
+            document.getElementById(`question-${index}`).classList.add("active");
+            currentQuestion = index;
+            document.getElementById("prev").disabled = currentQuestion === 0;
+            document.getElementById("next").disabled = currentQuestion === questions.length - 1;
+        }
+
+        // Timer (30 minuti)
+        let timeLeft = 30 * 60;
+        function startTimer() {
+            const timer = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById("time").textContent = 
+                    `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    checkAnswers();
+                }
+            }, 1000);
+        }
+
+        // Controllo risposte e feedback visivo
+        function checkAnswers() {
+            let score = 0;
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                const options = document.querySelectorAll(`#question-${index} .option`);
+                options.forEach(option => {
+                    const value = option.getAttribute("data-value");
+                    if (value === q.correct) {
+                        option.classList.add("correct");
+                        const lamp = option.querySelector(".lamp");
+                        lamp.style.display = "inline";
+                        lamp.addEventListener("click", () => {
+                            const explanation = document.getElementById(`exp-${index}`);
+                            explanation.style.display = "block";
+                        });
+                    }
+                });
+                if (selected) {
+                    if (selected.value === q.correct) {
+                        score++;
+                    } else {
+                        selected.parentElement.classList.add("wrong");
+                    }
+                }
+            });
+            const resultDiv = document.getElementById("result");
+            resultDiv.textContent = `Punteggio: ${score} / ${questions.length}`;
+            document.getElementById("submit").disabled = true;
+            document.getElementById("prev").disabled = true;
+            document.getElementById("next").disabled = true;
+            document.querySelectorAll("input[type=radio]").forEach(radio => {
+                radio.disabled = true;
+            });
+        }
+
+        // Inizializzazione
+        window.onload = () => {
+            loadQuestionNav();
+            loadQuiz();
+            startTimer();
+            document.getElementById("prev").addEventListener("click", () => {
+                if (currentQuestion > 0) showQuestion(currentQuestion - 1);
+            });
+            document.getElementById("next").addEventListener("click", () => {
+                if (currentQuestion < questions.length - 1) showQuestion(currentQuestion + 1);
+            });
+            document.getElementById("submit").addEventListener("click", () => {
+                if (confirm("Sei sicuro di voler inviare le risposte?")) {
+                    checkAnswers();
+                }
+            });
+        };
+    </script>
+</body>
+</html>
